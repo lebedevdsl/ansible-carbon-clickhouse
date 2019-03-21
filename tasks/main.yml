@@ -1,0 +1,33 @@
+---
+- name: Create directory
+  file:
+    dest: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - "{{ cch_log_dir }}"
+    - "{{ cch_data_dir }}"
+    - "{{ cch_config_dir }}"
+
+- name: Provide application config
+  template:
+    src: templates/carbon-clickhouse.conf.j2
+    dest: "{{ cch_config_dir }}/carbon-clickhouse.conf"
+  notify: "restart service"
+
+- name: Provide systemd service unit
+  template:
+    src: templates/carbon-clickhouse.service.j2
+    dest: /etc/systemd/system/carbon-clickhouse.service
+  notify: "reload systemd"
+
+- name: "Reload systemd"
+  meta: flush_handlers
+
+- name: Start Service
+  service:
+    name: "{{ cch_service_name }}"
+    state: "started"
+    enabled: yes

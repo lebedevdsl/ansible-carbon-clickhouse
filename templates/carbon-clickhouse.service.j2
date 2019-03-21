@@ -1,0 +1,22 @@
+[Unit]
+Description="Daemon for storing graphite metrics in clickhouse"
+Requires=docker.service
+
+[Service]
+ExecStartPre=/bin/sleep 1
+ExecStartPre=/usr/bin/docker pull {{ cch_docker_registry + cch_docker_image }}:{{ cch_docker_image_tag }}
+ExecStart=/usr/bin/docker run --restart=always \
+                          --name={{ cch_service_name }} \
+                          {% for port in cch_docker_container_ports %}
+                          -p={{ port }} \
+                          {% endfor %}
+                          {% for vol in cch_docker_container_volumes %}
+                          -v={{ vol }} \
+                          {% endfor %}
+                          {{ cch_docker_registry + cch_docker_image }}:{{ cch_docker_image_tag }}
+ExecStop=/usr/bin/docker stop {{ cch_service_name }}
+ExecStopPost=/usr/bin/docker rm -f {{ cch_service_name }}
+ExecReload=/usr/bin/docker restart {{ cch_service_name }}
+
+[Install]
+WantedBy=multi-user.target

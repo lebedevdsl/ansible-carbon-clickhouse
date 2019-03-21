@@ -1,0 +1,164 @@
+---
+# defaults file for rocketbank.carbon-clickhouse-docker
+cch_config_dir: /etc/carbon-clickhouse
+cch_log_dir: /var/log/carbon-clickhouse
+cch_data_dir: /var/lib/carbon-clickhouse
+cch_docker_registry: "localhost:5001"
+cch_docker_image: "carbon-clickhouse"
+cch_docker_image_tag: "latest"
+cch_docker_container_ports:
+  - "2003:2003"
+  - "2004:2004"
+  - "2005:2005"
+  - "2006:2006"
+  - "2007:2007"
+  - "7007:7007"
+cch_docker_container_volumes:
+  - "{{ cch_config_dir }}:/etc/carbon-clickhouse"
+  - "{{ cch_log_dir }}:/var/log/carbon-clickhouse"
+  - "{{ cch_data_dir }}:/var/lib/carbon-clickhouse"
+
+
+cch_service_name: "carbon-clickhouse"
+
+
+# config section
+#[common]
+# Prefix for store all internal carbon-clickhouse graphs. Supported macroses: {host}
+cch_common_metric_prefix: "carbon.agents.{host}"
+# Endpoint for store internal carbon metrics. Valid values: "" or "local", "tcp://host:port", "udp://host:port"
+cch_common_metric_endpoint: "local"
+# Interval of storing internal metrics. Like CARBON_METRIC_INTERVAL
+cch_common_metric_interval: "1m0s"
+# GOMAXPROCS
+cch_common_max_cpu: 1
+
+#[logging]
+# "stderr", "stdout" can be used as file name
+cch_logging_file: "/var/log/carbon-clickhouse/carbon-clickhouse.log"
+# Logging error level. Valid values: "debug", "info", "warn" "error"
+cch_logging_level: "info"
+
+#[data]
+# Folder for buffering received data
+cch_data_path: "/var/lib/carbon-clickhouse/"
+# Rotate (and upload) file interval.
+# Minimize chunk-interval for minimize lag between point receive and store
+cch_data_chunk_interval: "1s"
+# Auto-increase chunk interval if the number of unprocessed files is grown
+# Sample, set chunk interval to 10 if unhandled files count >= 5 and set to 60s if unhandled files count >= 20:
+# chunk-auto-interval = "5:10s,20:60s"
+cch_data_chunk_auto_interval: ""
+
+#[upload.graphite]
+cch_upload_graphite_type: "points"
+cch_upload_graphite_table: "graphite"
+cch_upload_graphite_threads: 1
+cch_upload_graphite_url: "http://localhost:8123/?database=default"
+cch_upload_graphite_timeout: "1m0s"
+# save zero value to Timestamp column (for point and posts-reverse tables)
+cch_upload_graphite_zero_timestamp: false
+
+#[upload.graphite_tree]
+cch_upload_graphite_tree_type: "tree"
+cch_upload_graphite_tree_table: "graphite_tree"
+cch_upload_graphite_tree_date: "2016-11-01"
+cch_upload_graphite_tree_threads: 1
+cch_upload_graphite_tree_url: "http://localhost:8123/?database=default"
+cch_upload_graphite_tree_timeout: "1m0s"
+cch_upload_graphite_tree_cache_ttl: "12h0m0s"
+
+# # You can define additional upload destinations of any supported type:
+# # - points
+# # - tree
+# # - series (is described below)
+# # - tagged (is described below)
+# # - points-reverse (same scheme as points, but path 'a1.b2.c3' stored as 'c3.b2.a1')
+# # - series-reverse (same scheme as series, but path 'a1.b2.c3' stored as 'c3.b2.a1')
+
+# # Extra table with daily series list
+#
+# # CREATE TABLE graphite_series (
+# #   Date Date,
+# #   Level UInt32,
+# #   Path String,
+# #   Deleted UInt8,
+# #   Version UInt32
+# # ) ENGINE = ReplacingMergeTree(Date, (Level, Path, Date), 8192, Version);
+# [upload.graphite_series]
+# type = "series"
+# table = "graphite_series"
+# threads = 1
+# url = "http://localhost:8123/"
+# timeout = "1m0s"
+# cache-ttl = "12h0m0s"
+
+# # Extra table which can be used as index for tagged series
+#
+# # CREATE TABLE graphite_tagged (
+# #   Date Date,
+# #   Tag1 String,
+# #   Path String,
+# #   Tags Array(String),
+# #   Version UInt32,
+# #   Deleted UInt8
+# # ) ENGINE = ReplacingMergeTree(Date, (Tag1, Path, Date), 8192, Version);
+# [upload.graphite_tagged]
+# type = "tagged"
+# table = "graphite_tagged"
+# threads = 1
+# url = "http://localhost:8123/"
+# timeout = "1m0s"
+# cache-ttl = "12h0m0s"
+
+#[udp]
+cch_udp_listen: ":2003"
+cch_udp_enabled: true
+# drop received point if timestamp > now + value. 0 - don't drop anything
+cch_udp_drop_future: "0s"
+# drop received point if timestamp < now - value. 0 - don't drop anything
+cch_udp_drop_past: "0s"
+
+#[tcp]
+cch_tcp_listen: ":2003"
+cch_tcp_enabled: true
+cch_tcp_drop_future: "0s"
+cch_tcp_drop_past: "0s"
+
+#[pickle]
+cch_pickle_listen: ":2004"
+cch_pickle_enabled: false
+cch_pickle_drop_future: "0s"
+cch_pickle_drop_past: "0s"
+
+# https://github.com/lomik/carbon-clickhouse/blob/master/grpc/carbon.proto
+#[grpc]
+cch_grpc_listen: ":2005"
+cch_grpc_enabled: false
+cch_grpc_drop_future: "0s"
+cch_grpc_drop_past: "0s"
+
+#[prometheus]
+cch_prometheus_listen: ":2006"
+cch_prometheus_enabled: true
+cch_prometheus_drop_future: "0s"
+cch_prometheus_drop_past: "0s"
+
+#[telegraf_http_json]
+cch_telegraf_http_json_listen: ":2007"
+cch_telegraf_http_json_enabled: false
+cch_telegraf_http_json_drop_future: "0s"
+cch_telegraf_http_json_drop_past: "0s"
+
+# Golang pprof + some extra locations
+#
+# Last 1000 points dropped by "drop-future" and "drop-past" rules:
+# /debug/receive/tcp/dropped/
+# /debug/receive/udp/dropped/
+# /debug/receive/pickle/dropped/
+# /debug/receive/grpc/dropped/
+# /debug/receive/prometheus/dropped/
+# /debug/receive/telegraf_http_json/dropped/
+#[pprof]
+cch_pprof_listen: "localhost:7007"
+cch_pprof_enabled: false
