@@ -29,7 +29,7 @@ chunk-auto-interval = "{{ cch_data_chunk_auto_interval }}"
 type = "{{ cch_upload_graphite_type }}"
 table = "{{ cch_upload_graphite_table }}"
 threads = {{ cch_upload_graphite_threads }}
-url = "{{ cch_upload_graphite_url }}"
+url = "{{ cch_db_scheme + '://' + cch_db_user + ':' + cch_db_password + '@' + cch_db_host + ':' + cch_db_port + '/?database=' + cch_db_name }}"
 timeout = "{{ cch_upload_graphite_timeout }}"
 # save zero value to Timestamp column (for point and posts-reverse tables)
 zero-timestamp = {{ cch_upload_graphite_zero_timestamp | bool | lower }}
@@ -39,7 +39,7 @@ type = "{{ cch_upload_graphite_tree_type }}"
 table = "{{ cch_upload_graphite_tree_table }}"
 date = "{{ cch_upload_graphite_tree_date }}"
 threads = {{ cch_upload_graphite_tree_threads }}
-url = "{{ cch_upload_graphite_tree_url }}"
+url = "{{ cch_db_scheme + '://' + cch_db_user + ':' + cch_db_password + '@' + cch_db_host + ':' + cch_db_port + '/?database=' + cch_db_name }}"
 timeout = "{{ cch_upload_graphite_tree_timeout }}"
 cache-ttl = "{{ cch_upload_graphite_tree_cache_ttl }}"
 

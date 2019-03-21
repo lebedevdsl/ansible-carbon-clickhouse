@@ -20,7 +20,12 @@ cch_docker_container_volumes:
 
 
 cch_service_name: "carbon-clickhouse"
-
+cch_db_scheme: "http"
+cch_db_host: "localhost"
+cch_db_port: "8123"
+cch_db_name: "default"
+cch_db_user: "default"
+cch_db_password: ""
 
 # config section
 #[common]
