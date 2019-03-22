@@ -59,7 +59,7 @@ cch_data_chunk_auto_interval: ""
 cch_upload_graphite_type: "points"
 cch_upload_graphite_table: "graphite"
 cch_upload_graphite_threads: 1
-cch_upload_graphite_url: "http://localhost:8123/?database=default"
+#cch_upload_graphite_url: "http://localhost:8123/?database=default" # collecting constring from cch_db__
 cch_upload_graphite_timeout: "1m0s"
 # save zero value to Timestamp column (for point and posts-reverse tables)
 cch_upload_graphite_zero_timestamp: false
@@ -69,7 +69,7 @@ cch_upload_graphite_tree_type: "tree"
 cch_upload_graphite_tree_table: "graphite_tree"
 cch_upload_graphite_tree_date: "2016-11-01"
 cch_upload_graphite_tree_threads: 1
-cch_upload_graphite_tree_url: "http://localhost:8123/?database=default"
+#cch_upload_graphite_tree_url: "http://localhost:8123/?database=default" # collecting constring from cch_db__
 cch_upload_graphite_tree_timeout: "1m0s"
 cch_upload_graphite_tree_cache_ttl: "12h0m0s"
 
